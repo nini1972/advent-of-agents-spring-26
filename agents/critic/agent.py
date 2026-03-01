@@ -1,6 +1,17 @@
 from google.adk.agents import Agent, LoopAgent, SequentialAgent
 from google.adk.tools import FunctionTool, ToolContext
 
+# ==============================================================================
+# NOTES: ESCALATING OUT OF LOOPS
+# ==============================================================================
+# ADK's `LoopAgent` wraps a sub-agent and runs it repeatedly up to `max_iterations`.
+# To break out of this loop successfully before hitting the max, an agent can 
+# use a Tool like this one. 
+# Setting `tool_context.actions.escalate = True` tells the ADK runner to immediately
+# halt the current execution context (the loop) and escalate control back to the 
+# parent agent or caller.
+# ==============================================================================
+
 def approve_draft(tool_context: ToolContext) -> dict:
     """
     Call this tool when the draft completely meets the rubric and is approved.
