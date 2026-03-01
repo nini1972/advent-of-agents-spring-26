@@ -11,6 +11,15 @@ def approve_draft(tool_context: ToolContext) -> dict:
 
 approve_tool = FunctionTool(approve_draft)
 
+# ==============================================================================
+# NOTES: STATE AND JINJA TEMPLATING IN LOOPS
+# ==============================================================================
+# By specifying `output_key='latest_feedback'` on the critic, we save its 
+# feedback into the session state. We then inject that feedback back into the 
+# writer's instruction using Jinja templating. The `default('')` filter ensures 
+# the writer doesn't fail on its first run when feedback isn't available yet.
+# ==============================================================================
+
 writer = Agent(
     name='writer',
     model='gemini-2.5-flash',
@@ -18,8 +27,10 @@ writer = Agent(
     instruction=(
         "You are a sci-fi writer. Your job is to write a short story based on the user's prompt. "
         "IMPORTANT: If the critic provides feedback, revise your story strictly following their feedback. "
-        "Do not explain yourself, just provide the revised story."
-    )
+        "Do not explain yourself, just provide the revised story.\n\n"
+        "Latest Feedback: {{ latest_feedback | default('') }}"
+    ),
+    output_key='latest_draft'
 )
 
 critic = Agent(
@@ -34,9 +45,12 @@ critic = Agent(
         "If the draft FAILS any criteria, output actionable feedback on what needs to be fixed. "
         "DO NOT approve the draft. "
         "If the draft PASSES all criteria perfectly, you MUST call the `approve_draft` tool to signal "
-        "that the draft is approved and the loop can end."
+        "that the draft is approved and the loop can end.\n\n"
+        "Current Draft to Evaluate:\n"
+        "{{ latest_draft }}"
     ),
-    tools=[approve_tool]
+    tools=[approve_tool],
+    output_key='latest_feedback'
 )
 
 root_agent = LoopAgent(

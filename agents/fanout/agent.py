@@ -5,13 +5,13 @@ from google.adk.agents import LlmAgent
 LlmAgent.set_default_model('gemini-2.5-flash')
 
 # ==============================================================================
-# STUDENT NOTES: OUTPUT KEYS AND STATE
+# NOTES: OUTPUT KEYS AND STATE
 # ==============================================================================
 # In ADK, Agents process information and return a text response. By default,
 # this response is simply passed up the chain or back to the user.
 #
-# However, specifying an `output_key` (e.g., output_key='healthcare_research')
-# tells the ADK runner to automatically save the agent's final text response
+# However, we choose to explicitly specify an `output_key` (e.g., output_key='healthcare_research')
+# to tell the ADK runner to automatically save the agent's final text response
 # into the current session's STATE dictionary under that specific key.
 #
 # This enables powerful data routing between nested agents:
@@ -45,7 +45,7 @@ education_researcher = Agent(
 )
 
 # ==============================================================================
-# STUDENT NOTES: PARALLEL AGENT FANOUT
+# NOTES: PARALLEL AGENT FANOUT
 # ==============================================================================
 # A ParallelAgent runs all of its sub_agents concurrently rather than in sequence.
 # Since our researchers are making network calls to LLMs, running them in
@@ -60,7 +60,7 @@ research_squad = ParallelAgent(
 )
 
 # ==============================================================================
-# STUDENT NOTES: STATE INTERPOLATION (SYNTHESIS)
+# NOTES: STATE INTERPOLATION (SYNTHESIS)
 # ==============================================================================
 # Look closely at the instruction string below. Notice the curly braces placeholders:
 # {healthcare_research}, {finance_research}, {education_research}
@@ -89,7 +89,7 @@ synthesizer = Agent(
 )
 
 # ==============================================================================
-# STUDENT NOTES: SEQUENTIAL EXECUTION
+# NOTES: SEQUENTIAL EXECUTION
 # ==============================================================================
 # SequentialAgent executes agents in list order, passing the output of the previous to the next.
 # Here, it guarantees that the parallel fanout runs to completion (populating the state)
