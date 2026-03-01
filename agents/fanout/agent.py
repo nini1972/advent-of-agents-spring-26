@@ -4,6 +4,8 @@ from google.adk.agents import Agent, ParallelAgent, SequentialAgent
 from google.adk.agents import LlmAgent
 LlmAgent.set_default_model('gemini-2.5-flash')
 
+from google.adk.tools import google_search
+
 # ==============================================================================
 # NOTES: OUTPUT KEYS AND STATE
 # ==============================================================================
@@ -26,22 +28,25 @@ LlmAgent.set_default_model('gemini-2.5-flash')
 healthcare_researcher = Agent(
     name='healthcare_researcher',
     description='Specializes in AI trends in healthcare',
-    instruction='Research how AI is impacting healthcare. Provide a simple, concise bulleted list of 2-3 key trends. Cite examples if possible.',
+    instruction='Use the Google Search tool to research how AI is impacting healthcare. Provide a simple, concise bulleted list of 2-3 key trends. Cite examples if possible.',
     output_key='healthcare_research',
+    tools=[google_search],
 )
 
 finance_researcher = Agent(
     name='finance_researcher',
     description='Specializes in AI trends in finance',
-    instruction='Research how AI is impacting finance and banking. Provide a simple, concise bulleted list of 2-3 key trends. Cite examples if possible.',
+    instruction='Use the Google Search tool to research how AI is impacting finance and banking. Provide a simple, concise bulleted list of 2-3 key trends. Cite examples if possible.',
     output_key='finance_research',
+    tools=[google_search],
 )
 
 education_researcher = Agent(
     name='education_researcher',
     description='Specializes in AI trends in education',
-    instruction='Research how AI is impacting education. Provide a simple, concise bulleted list of 2-3 key trends. Cite examples if possible.',
+    instruction='Use the Google Search tool to research how AI is impacting education. Provide a simple, concise bulleted list of 2-3 key trends. Cite examples if possible.',
     output_key='education_research',
+    tools=[google_search],
 )
 
 # ==============================================================================
@@ -110,7 +115,7 @@ if __name__ == '__main__':
         runner = InMemoryRunner(agent=root_agent)
         # Using a dummy prompt because the agents are already hardcoded with specific instructions.
         print("Starting Parallel Fanout Demo...")
-        async for event in runner.run_async("Please execute the AI trend research task."):
+        async for event in runner.run_async(new_message="Please execute the AI trend research task.", user_id="user", session_id="session"):
             if event.is_final_response():
                 print(f"[{event.author}] {event.content.text}")
 
