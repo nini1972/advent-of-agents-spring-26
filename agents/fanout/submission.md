@@ -6,21 +6,6 @@
 
 ### **Status: Draft**
 
-### **The Golden Rule: "Always Kata" 🥋**
-
-Our goal is **actionable skills, zero fluff, deployed in under 5 minutes.** If a developer cannot copy-paste your code and see a result in 300 seconds, it is not a Kata.
-
-### **⚠️ The "Lean Team" Reality Check**
-
-We are approaching Google Next. Everyone is busy. We cannot fix broken demos or edit bad videos.
-
-* **The Queue:** We have a prioritized queue. High-quality submissions (perfect code + great video) go live immediately.  
-* **The Backlog:** Submissions with "slop" (AI voiceovers, broken snippets, no visuals) go to the back of the line until *you* fix them.
-
-## **📋 The Deliverable Template**
-
-*Please make a copy of this doc and share it with [Owners].*
-
 ### **1. The Kata (Website Modal Content)**
 
 *Target Audience: Developers. Style: AdventOfCode / DevRel.*

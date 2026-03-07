@@ -2,6 +2,13 @@
 
 This repository contains the code for various agents (Fanout, Sculptor, Critic, Hierarchical) built using the Google Agent Development Kit (ADK).
 
+## Demo Videos
+
+See the agents in action!
+- **Hierarchical:** [https://youtu.be/68EznHkK_UQ](https://youtu.be/68EznHkK_UQ)
+- **Fanout:** [https://youtu.be/4-lr3sh2ETM](https://youtu.be/4-lr3sh2ETM)
+- **Critic:** [https://youtu.be/Kp0HrGst5-w](https://youtu.be/Kp0HrGst5-w)
+
 ## Prerequisites
 
 - [Python 3.11+](https://www.python.org/downloads/)
