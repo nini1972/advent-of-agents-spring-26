@@ -120,20 +120,21 @@ root_agent = SequentialAgent(
     sub_agents=[manager, worker_squad, synthesizer]
 )
 
+from google.adk.apps import App
+
+app = App(
+    name="hierarchical_app",
+    root_agent=root_agent
+)
+
 if __name__ == '__main__':
     # Provided for local testing if running directly with `uv run python` instead of `adk run`
     import asyncio
     from google.adk.runners import InMemoryRunner
-    from google.genai import types
 
     async def run_demo():
-        runner = InMemoryRunner(agent=root_agent)
+        runner = InMemoryRunner(app=app)
         print("Starting Hierarchical Agent Demo...")
-        msg = types.Content(role="user", parts=[types.Part.from_text(text="Research the evolution of generative AI in software engineering. Cover its historical roots, its current impact on standard IDEs, and predict what software engineering will look like 10 years from now.")])
-        
-        async for event in runner.run_async(new_message=msg, user_id="user", session_id="session"):
-            if event.is_final_response():
-                print(f"[{event.author}] {event.content.text}")
-                print("-" * 40)
+        await runner.run_debug("Research the evolution of generative AI in software engineering. Cover its historical roots, its current impact on standard IDEs, and predict what software engineering will look like 10 years from now.")
 
     asyncio.run(run_demo())

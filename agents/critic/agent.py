@@ -69,3 +69,22 @@ root_agent = LoopAgent(
     sub_agents=[writer, critic],
     max_iterations=4
 )
+
+from google.adk.apps import App
+
+app = App(
+    name="critic_app",
+    root_agent=root_agent
+)
+
+if __name__ == '__main__':
+    # Provided for local testing if running directly with `uv run python` instead of `adk run`
+    import asyncio
+    from google.adk.runners import InMemoryRunner
+
+    async def run_demo():
+        runner = InMemoryRunner(app=app)
+        print("Starting Critic Demo (Writer-Critic Loop)...")
+        await runner.run_debug("Write me a story.")
+
+    asyncio.run(run_demo())

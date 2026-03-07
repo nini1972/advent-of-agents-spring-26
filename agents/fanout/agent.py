@@ -106,17 +106,22 @@ root_agent = SequentialAgent(
     sub_agents=[research_squad, synthesizer],
 )
 
+from google.adk.apps import App
+
+app = App(
+    name="fanout_app",
+    root_agent=root_agent
+)
+
 if __name__ == '__main__':
     # Provided for local testing if running directly with `uv run python` instead of `adk run`
     import asyncio
     from google.adk.runners import InMemoryRunner
 
     async def run_demo():
-        runner = InMemoryRunner(agent=root_agent)
+        runner = InMemoryRunner(app=app)
         # Using a dummy prompt because the agents are already hardcoded with specific instructions.
         print("Starting Parallel Fanout Demo...")
-        async for event in runner.run_async(new_message="Please execute the AI trend research task.", user_id="user", session_id="session"):
-            if event.is_final_response():
-                print(f"[{event.author}] {event.content.text}")
+        await runner.run_debug("Please execute the AI trend research task.")
 
     asyncio.run(run_demo())
