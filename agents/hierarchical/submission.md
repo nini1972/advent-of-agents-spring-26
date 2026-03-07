@@ -12,12 +12,21 @@
 
 *Target Audience: Developers. Style: AdventOfCode / DevRel.*
 
-* **The Problem / Why it matters:** Complex user requests cannot always be decomposed ahead of time. Hardcoding a static sequence of agent steps fails when the prompt requires a dynamically generated plan of attack.
-* **The Solution:** The **Hierarchical Agent (Russian Doll)** pattern. We use a top-level Manager agent to orchestrate the flow, leaning on sub-agents to do the heavy lifting.
-* **How It Works:**
-  * **AgentTool:** We wrap a "Planner" LLM agent inside an `AgentTool`. The Manager calls this tool at runtime to break the complex problem into smaller, logical steps.
-  * **Sub-agents block:** The Manager oversees a downstream `SequentialAgent` pipeline (in this case, consisting of a Researcher and Synthesizer).
-  * **Autonomous Handoff:** Once the Manager receives the generated plan from the Planner tool, it activates the `SequentialAgent` execution pipeline, passing the plan as input so the workers can execute it entirely autonomously without needing a human-in-the-loop.
+**The Problem / Why it matters:**
+
+Complex user requests cannot always be decomposed ahead of time. Hardcoding a static sequence of agent steps fails when the prompt requires a dynamically generated plan of attack.
+
+**The Solution:**
+
+The **Hierarchical Agent (Russian Doll)** pattern. We use a top-level Manager agent to orchestrate the flow, leaning on sub-agents to do the heavy lifting.
+
+**How It Works:**
+
+* **AgentTool:** We wrap a "Planner" LLM agent inside an `AgentTool`. The Manager calls this tool at runtime to break the complex problem into smaller, logical steps.
+
+* **Sub-agents block:** The Manager oversees a downstream `SequentialAgent` pipeline (in this case, consisting of a Researcher and Synthesizer).
+
+* **Autonomous Handoff:** Once the Manager receives the generated plan from the Planner tool, it activates the `SequentialAgent` execution pipeline, passing the plan as input so the workers can execute it entirely autonomously without needing a human-in-the-loop.
 
 ### **2. The Code (The "Modal" Snippet)**
 

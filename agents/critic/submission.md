@@ -8,12 +8,21 @@
 
 ### **1. The Kata (Website Modal Content)**
 
-* **The Problem / Why it matters:** LLMs hallucinate or fail strict formatting rubrics (like word count logic or structural requirements) on the first try. Manually reprompting wastes developer time.
-* **The Solution:** The **Writer-Critic (Generator-Evaluator)** pattern. We pit two agents against each other: a creative Writer and a strict Critic who evaluates the draft against a rubric, iterating until perfection.
-* **How It Works:**
-  * **LoopAgent:** We wrap the Writer and Critic inside an ADK `LoopAgent`, which automatically cycles execution back-and-forth between its sub-agents up to a `max_iterations` limit.
-  * **output_key injection:** The Writer saves to `{latest_draft}` and the Critic saves to `{latest_feedback}`. They use these template variables in their prompts to seamlessly read each other's outputs on the next loop cycle.
-  * **Early Escalation:** The Critic has access to an `approve_draft` function tool. Once the Critic decides the rubric is fully passed, it calls the tool. The tool sets `tool_context.actions.escalate = True`, immediately breaking out of the loop execution early and returning the successful payload.
+**The Problem / Why it matters:**
+
+LLMs hallucinate or fail strict formatting rubrics (like word count logic or structural requirements) on the first try. Manually reprompting wastes developer time.
+
+**The Solution:**
+
+The **Writer-Critic (Generator-Evaluator)** pattern. We pit two agents against each other: a creative Writer and a strict Critic who evaluates the draft against a rubric, iterating until perfection.
+
+**How It Works:**
+
+* **LoopAgent:** We wrap the Writer and Critic inside an ADK `LoopAgent`, which automatically cycles execution back-and-forth between its sub-agents up to a `max_iterations` limit.
+
+* **output_key injection:** The Writer saves to `{latest_draft}` and the Critic saves to `{latest_feedback}`. They use these template variables in their prompts to seamlessly read each other's outputs on the next loop cycle.
+
+* **Early Escalation:** The Critic has access to an `approve_draft` function tool. Once the Critic decides the rubric is fully passed, it calls the tool. The tool sets `tool_context.actions.escalate = True`, immediately breaking out of the loop execution early and returning the successful payload.
 
 ### **2. The Code (The "Modal" Snippet)**
 

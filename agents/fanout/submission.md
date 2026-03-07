@@ -10,12 +10,21 @@
 
 *Target Audience: Developers. Style: AdventOfCode / DevRel.*
 
-* **The Problem / Why it matters:** Sequential LLM calls are painfully slow. In multi-agent systems involving independent tasks (like running multiple research queries), executing them one by one creates unacceptable latency.
-* **The Solution:** The ADK **Parallel Fanout** pattern. We can spin up multiple independent agents to run concurrently, and automatically synthesize their results together when they finish.
-* **How It Works:**
-  * **ParallelAgent:** Groups independent feature agents together so they are executed simultaneously, dramatically cutting down wall-clock execution time.
-  * **output_key:** Assigning an `output_key` to each parallel worker allows ADK to implicitly save their return payload directly into the session State.
-  * **State Interpolation:** A downstream `SequentialAgent` handles the synthesis step. Because the parallel workers populated the state dictionary, we simply use `{bracket}` templating (e.g., `{healthcare_research}`) in our synthesizer's instruction prompt—no custom data-passing code required.
+**The Problem / Why it matters:**
+
+Sequential LLM calls are painfully slow. In multi-agent systems involving independent tasks (like running multiple research queries), executing them one by one creates unacceptable latency.
+
+**The Solution:**
+
+The ADK **Parallel Fanout** pattern. We can spin up multiple independent agents to run concurrently, and automatically synthesize their results together when they finish.
+
+**How It Works:**
+
+* **ParallelAgent:** Groups independent feature agents together so they are executed simultaneously, dramatically cutting down wall-clock execution time.
+
+* **output_key:** Assigning an `output_key` to each parallel worker allows ADK to implicitly save their return payload directly into the session State.
+
+* **State Interpolation:** A downstream `SequentialAgent` handles the synthesis step. Because the parallel workers populated the state dictionary, we simply use `{bracket}` templating (e.g., `{healthcare_research}`) in our synthesizer's instruction prompt—no custom data-passing code required.
 
 ### **2. The Code (The "Modal" Snippet)**
 
