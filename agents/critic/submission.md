@@ -23,13 +23,13 @@ def approve_draft(tool_context: ToolContext) -> dict:
     return {"status": "success", "message": "Approved."}
 
 writer = Agent(
-    name='writer', model='gemini-3.0-flash-preview',
+    name='writer', model='gemini-3-flash-preview',
     instruction="Revise your draft based on feedback: {latest_feedback?}",
     output_key='latest_draft'
 )
 
 critic = Agent(
-    name='critic', model='gemini-3.1-pro-preview',
+    name='critic', model='gemini-3-flash-preview',
     instruction=(
         "Evaluate draft: {latest_draft}. "
         "RUBRIC: 1. Must be sci-fi. 2. Must be under 100 words. "

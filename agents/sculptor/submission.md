@@ -87,6 +87,7 @@ def exit_loop(tool_context: ToolContext) -> dict:
 # ==============================================================================
 sculptor = LlmAgent(
     name="sculptor",
+    model="gemini-3-flash-preview",
     instruction="""
     Find the input 'x' that yields the integer provided by the user. 
     If the user does not provide a number, then use '17' as your target number. 

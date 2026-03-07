@@ -8,21 +8,6 @@
 
 ### **Status: Started**
 
-### **The Golden Rule: "Always Kata" 🥋**
-
-Our goal is **actionable skills, zero fluff, deployed in under 5 minutes.** If a developer cannot copy-paste your code and see a result in 300 seconds, it is not a Kata.
-
-### **⚠️ The "Lean Team" Reality Check**
-
-We are approaching Google Next. Everyone is busy. We cannot fix broken demos or edit bad videos.
-
-* **The Queue:** We have a prioritized queue. High-quality submissions (perfect code + great video) go live immediately.  
-* **The Backlog:** Submissions with "slop" (AI voiceovers, broken snippets, no visuals) go to the back of the line until *you* fix them.
-
-## **📋 The Deliverable Template**
-
-*Please make a copy of this doc and share it with [Owners].*
-
 ### **1. The Kata (Website Modal Content)**
 
 *Target Audience: Developers. Style: AdventOfCode / DevRel.*
@@ -42,8 +27,10 @@ We are approaching Google Next. Everyone is busy. We cannot fix broken demos or 
 * **Snippet:**
 
 ```python
-from google.adk.tools.agent_tool import AgentTool
+from google.adk.tools import AgentTool
+from google.adk.tools import google_search
 from google.adk.agents import LlmAgent, SequentialAgent
+from google.adk.apps import App
 
 # The Planner is used purely as a tool by the Manager
 planner = LlmAgent(
@@ -52,10 +39,23 @@ planner = LlmAgent(
     instruction='Break the user prompt into exactly three distinct research themes.'
 )
 
+# Define sub-agents for execution
+researcher = LlmAgent(
+    name='researcher', 
+    model='gemini-3-flash-preview', 
+    tools=[google_search], 
+    instruction='Research the assigned topic step-by-step.'
+)
+synthesizer = LlmAgent(
+    name='synthesizer', 
+    model='gemini-3-flash-preview', 
+    instruction='Synthesize the findings into a cohesive report.'
+)
+
 # A logical pipeline of sub-agents to handle execution
 execution_pipeline = SequentialAgent(
     name='execution_pipeline',
-    sub_agents=[researcher, synthesizer] # Defined elsewhere
+    sub_agents=[researcher, synthesizer]
 )
 
 # The Manager orchestrates the whole flow autonomously

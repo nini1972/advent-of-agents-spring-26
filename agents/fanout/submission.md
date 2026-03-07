@@ -41,8 +41,8 @@ from google.adk.agents import Agent, ParallelAgent, SequentialAgent
 from google.adk.tools import google_search
 
 # 1. Define independent research agents with explicit output_keys and grounding tools
-healthcare_researcher = Agent(name='healthcare_researcher', model='gemini-3.0-flash-preview', output_key='healthcare_research', tools=[google_search], instruction='Use the Google Search tool to...')
-finance_researcher = Agent(name='finance_researcher', model='gemini-3.0-flash-preview', output_key='finance_research', tools=[google_search], instruction='Use the Google Search tool to...')
+healthcare_researcher = Agent(name='healthcare_researcher', model='gemini-3-flash-preview', output_key='healthcare_research', tools=[google_search], instruction='Use the Google Search tool to...')
+finance_researcher = Agent(name='finance_researcher', model='gemini-3-flash-preview', output_key='finance_research', tools=[google_search], instruction='Use the Google Search tool to...')
 
 # 2. Fanout: Run them all concurrently
 research_squad = ParallelAgent(
@@ -53,7 +53,7 @@ research_squad = ParallelAgent(
 # 3. State Interpolation: Use `{output_key}` placeholders in the synthesizer prompt
 synthesizer = Agent(
     name='synthesizer',
-    model='gemini-3.0-flash-preview',
+    model='gemini-3-flash-preview',
     instruction="Synthesize the following trends: \n\n{healthcare_research}\n\n{finance_research}",
 )
 
