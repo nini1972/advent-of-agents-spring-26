@@ -12,12 +12,12 @@
 
 *Target Audience: Developers. Style: AdventOfCode / DevRel.*
 
-* **Goal:** Explain *how* it works technically.  
-* **Constraint:** 2-3 paragraphs max. No marketing fluff. Pure engineering.  
-* **Draft:**  
-  When dealing with an extremely complex prompt, we often don't know the required tasks ahead of time. The Hierarchical (or "Nested" / "Russian Doll") pattern solves this by using a top-level Manager agent that utilizes an `AgentTool` to dynamically generate a plan before executing it.
-
-  Instead of pre-coding separate parallel workers, the Manager leverages a dedicated Planner agent as a tool. Once the plan is returned to the Manager, it activates its nested `SequentialAgent` sub-pipeline—containing a Researcher and a Synthesizer—to fully execute the plan autonomously without requiring a human-in-the-loop.
+* **The Problem / Why it matters:** Complex user requests cannot always be decomposed ahead of time. Hardcoding a static sequence of agent steps fails when the prompt requires a dynamically generated plan of attack.
+* **The Solution:** The **Hierarchical Agent (Russian Doll)** pattern. We use a top-level Manager agent to orchestrate the flow, leaning on sub-agents to do the heavy lifting.
+* **How It Works:**
+  * **AgentTool:** We wrap a "Planner" LLM agent inside an `AgentTool`. The Manager calls this tool at runtime to break the complex problem into smaller, logical steps.
+  * **Sub-agents block:** The Manager oversees a downstream `SequentialAgent` pipeline (in this case, consisting of a Researcher and Synthesizer).
+  * **Autonomous Handoff:** Once the Manager receives the generated plan from the Planner tool, it activates the `SequentialAgent` execution pipeline, passing the plan as input so the workers can execute it entirely autonomously without needing a human-in-the-loop.
 
 ### **2. The Code (The "Modal" Snippet)**
 

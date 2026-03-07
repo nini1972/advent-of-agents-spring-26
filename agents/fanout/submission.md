@@ -10,9 +10,12 @@
 
 *Target Audience: Developers. Style: AdventOfCode / DevRel.*
 
-* **Goal:** Explain *how* to drastically reduce latency by running independent, grounded LLM tasks concurrently and automatically synthesizing their outputs using Google ADK.
-* **Draft:**  
-  By leveraging ADK's `ParallelAgent` and `output_key` routing, we run multiple grounded LLM calls via Google Search concurrently, saving massive amounts of time. The results are automatically funneled into a session state dictionary. A downstream `SequentialAgent` then seamlessly injects these outputs as `{placeholders}` into a synthesis prompt without writing custom orchestration or data-passing code.
+* **The Problem / Why it matters:** Sequential LLM calls are painfully slow. In multi-agent systems involving independent tasks (like running multiple research queries), executing them one by one creates unacceptable latency.
+* **The Solution:** The ADK **Parallel Fanout** pattern. We can spin up multiple independent agents to run concurrently, and automatically synthesize their results together when they finish.
+* **How It Works:**
+  * **ParallelAgent:** Groups independent feature agents together so they are executed simultaneously, dramatically cutting down wall-clock execution time.
+  * **output_key:** Assigning an `output_key` to each parallel worker allows ADK to implicitly save their return payload directly into the session State.
+  * **State Interpolation:** A downstream `SequentialAgent` handles the synthesis step. Because the parallel workers populated the state dictionary, we simply use `{bracket}` templating (e.g., `{healthcare_research}`) in our synthesizer's instruction prompt—no custom data-passing code required.
 
 ### **2. The Code (The "Modal" Snippet)**
 
