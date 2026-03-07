@@ -10,3 +10,6 @@ wheels/
 .venv
 .env
 .adk
+
+# External repositories
+advent-of-agents/

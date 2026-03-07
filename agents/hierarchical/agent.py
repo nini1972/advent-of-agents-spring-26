@@ -1,124 +1,84 @@
 from google.adk.agents import Agent, ParallelAgent, SequentialAgent
 from google.adk.tools import google_search
 from google.adk.agents import LlmAgent
-
-LlmAgent.set_default_model('gemini-2.5-flash')
-
 # ==============================================================================
-# HIERARCHICAL DECOMPOSITION (Russian Doll Pattern)
+# HIERARCHICAL DECOMPOSITION (Nested "Russian Doll" Pattern)
 # ==============================================================================
-# In cases where a user prompt is extremely complex, we might not know ahead
-# of time what specific research needs to be done.
-# 
-# Instead of hardcoding specialized agents (like we did in the 'fanout' example),
-# we introduce a Manager agent. The Manager's sole job is to read the complex 
-# prompt and break it down into an explicit, structured plan. 
+# In complex scenarios, you may want an orchestrator agent that autonomously
+# drafts a plan and then delegates that plan to a specialized pipeline of
+# sub-agents. 
 #
-# By writing this plan to the ADK session state (output_key='manager_plan'),
-# downstream Worker agents can dynamically interpolate that plan into their 
-# instructions, allowing them to execute specific slices of the Manager's
-# dynamically generated task list.
+# This uses the `AgentTool` concept. The Manager treats the Planner as a tool
+# to get a structured plan, then activates its sub-agents to execute it.
 # ==============================================================================
+from google.adk.tools.agent_tool import AgentTool
 
-manager = Agent(
-    name='manager',
-    description='A high-level planner that breaks a complex prompt into distinct parts.',
+# 1. THE PLANNER (Used as a tool)
+planner = LlmAgent(
+    name='planner',
+    model='gemini-3-flash-preview',
+    description='Breaks a complex prompt into distinct parts.',
     instruction='''
-    You are an AI Architect Manager. Read the user's complex prompt and break it down into exactly three distinct research themes or chronological phases (e.g., Historical, Current State, Future Outlook). 
+    You are an AI Architect Manager. Read the user's complex prompt and break it down into exactly three distinct research themes or chronological phases. 
     
     Output nothing but a numbered list:
     1. [Theme 1 Description]
     2. [Theme 2 Description]
     3. [Theme 3 Description]
     ''',
-    output_key='manager_plan',
+    # Tool agents write their output directly into a tool execution result,
+    # rather than modifying the global ADK session memory.
 )
 
-# ==============================================================================
-# THE WORKERS
-# ==============================================================================
-# Each worker is identical in capability (they all have google_search), but 
-# their instructions explicitly tell them to focus on a different bullet point
-# from the dynamically generated {manager_plan}.
-# ==============================================================================
-
-worker_1 = Agent(
-    name='worker_1',
-    description='Executes the first part of the manager plan.',
+# 2. THE EXECUTION PIPELINE (Sub-agents)
+researcher = LlmAgent(
+    name='researcher',
+    model='gemini-3-flash-preview',
+    description='Executes the research plan.',
     tools=[google_search],
-    output_key='worker_1_output',
+    output_key='research_findings',
     instruction='''
-    You are Researcher 1. Use the google_search tool to complete ONLY task #1 from the Manager's Plan below. Provide a detailed summary of your findings.
-    
-    # Manager's Plan
-    {manager_plan}
+    You are a meticulous researcher. The user will provide a 3-part research plan.
+    Use the `google_search` tool to gather comprehensive information for ALL three themes in the plan.
+    Synthesize your findings into a detailed research document.
     '''
 )
 
-worker_2 = Agent(
-    name='worker_2',
-    description='Executes the second part of the manager plan.',
-    tools=[google_search],
-    output_key='worker_2_output',
-    instruction='''
-    You are Researcher 2. Use the google_search tool to complete ONLY task #2 from the Manager's Plan below. Provide a detailed summary of your findings.
-    
-    # Manager's Plan
-    {manager_plan}
-    '''
-)
-
-worker_3 = Agent(
-    name='worker_3',
-    description='Executes the third part of the manager plan.',
-    tools=[google_search],
-    output_key='worker_3_output',
-    instruction='''
-    You are Researcher 3. Use the google_search tool to complete ONLY task #3 from the Manager's Plan below. Provide a detailed summary of your findings.
-    
-    # Manager's Plan
-    {manager_plan}
-    '''
-)
-
-worker_squad = ParallelAgent(
-    name='worker_squad',
-    description='Runs the three workers concurrently.',
-    sub_agents=[worker_1, worker_2, worker_3],
-)
-
-# ==============================================================================
-# THE SYNTHESIZER
-# ==============================================================================
-# Gathers the manager's original plan and the specific outputs from the parallel 
-# workers to write the final unified response.
-# ==============================================================================
-
-synthesizer = Agent(
+synthesizer = LlmAgent(
     name='synthesizer',
-    description='Synthesizes the worker outputs.',
+    model='gemini-3-flash-preview',
+    description='Writes the final report from research findings.',
     instruction='''
-    You are the Lead Editor. Using the original Manager's Plan and the specific outputs from your three researchers, synthesize a comprehensive, cohesive report on the topic.
+    You are the Lead Editor. Using the `research_findings` generated by the previous agent, synthesize a comprehensive, cohesive final report on the topic.
     
-    # Original Plan
-    {manager_plan}
-    
-    # Researcher 1 Findings
-    {worker_1_output}
-    
-    # Researcher 2 Findings
-    {worker_2_output}
-    
-    # Researcher 3 Findings
-    {worker_3_output}
+    # Research Findings
+    {research_findings}
     '''
 )
 
-root_agent = SequentialAgent(
-    name='root_agent',
-    description='Orchestrates the manager, parallel workers, and synthesizer.',
-    sub_agents=[manager, worker_squad, synthesizer]
+execution_pipeline = SequentialAgent(
+    name='execution_pipeline',
+    description='A logical pipeline that researches a plan and writes a final report.',
+    sub_agents=[researcher, synthesizer]
 )
+
+# 3. THE MANAGER (Top-level orchestrator)
+manager = LlmAgent(
+    name='manager',
+    model='gemini-3-flash-preview',
+    description='The top-level orchestrator that plans and delegates.',
+    tools=[AgentTool(planner)],
+    sub_agents=[execution_pipeline],
+    instruction='''
+    You are the Director. Your strict workflow is:
+    1. Use the `planner` tool to create a detailed research plan based on the user's initial prompt.
+    2. Once you have the 3-part plan from the tool, ACTIVATE your `execution_pipeline` sub-agent.
+    3. Pass the completed plan to the pipeline so it can research and synthesize a report.
+    4. Return the comprehensive final synthesized report to the user. Do exactly what the user asks!
+    '''
+)
+
+root_agent = manager
 
 from google.adk.apps import App
 
