@@ -73,7 +73,7 @@ root_agent = LoopAgent(
 from google.adk.apps import App
 
 app = App(
-    name="critic_app",
+    name="critic",
     root_agent=root_agent
 )
 

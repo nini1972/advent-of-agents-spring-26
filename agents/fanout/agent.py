@@ -109,7 +109,7 @@ root_agent = SequentialAgent(
 from google.adk.apps import App
 
 app = App(
-    name="fanout_app",
+    name="fanout",
     root_agent=root_agent
 )
 

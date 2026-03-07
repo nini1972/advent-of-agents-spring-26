@@ -80,7 +80,7 @@ root_agent = LoopAgent(
 from google.adk.apps import App
 
 app = App(
-    name="sculptor_app",
+    name="sculptor",
     root_agent=root_agent
 )
 

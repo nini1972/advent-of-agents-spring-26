@@ -123,7 +123,7 @@ root_agent = SequentialAgent(
 from google.adk.apps import App
 
 app = App(
-    name="hierarchical_app",
+    name="hierarchical",
     root_agent=root_agent
 )
 
