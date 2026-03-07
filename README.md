@@ -37,14 +37,20 @@ You need a Google Gemini API key to run these agents.
 
 There are two main ways to execute the agents:
 
-### 1. Locally via Command Line
-You can run any specific agent directly. For example, to run the Hierarchical agent:
+### 1. Locally via Direct Script Execution
+You can run any specific agent directly to execute its built-in prompt via the `__main__` block. For example, to run the Hierarchical agent's predefined test:
 ```bash
 uv run python agents/hierarchical/agent.py
 ```
-This will start an interactive runner where you can enter prompts directly in your terminal.
 
-### 2. Via the ADK Web UI
+### 2. Locally via Interactive ADK CLI
+If you want to have an interactive chat session with the agent in your terminal, use the ADK CLI:
+```bash
+uv run adk run agents/hierarchical
+```
+This will start an interactive runner where you can converse and enter prompts directly in your terminal.
+
+### 3. Via the ADK Web UI
 If you prefer a visual interface, you can launch the built-in ADK web experience:
 ```bash
 uv run adk web agents --port 21000
