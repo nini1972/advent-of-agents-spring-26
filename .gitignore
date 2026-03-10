@@ -14,3 +14,6 @@ wheels/
 # External repositories
 advent-of-agents/
 SUBMISSION_TEMPLATE.md
+
+#Ignore vscode AI rules
+.github\instructions\codacy.instructions.md

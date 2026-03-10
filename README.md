@@ -63,3 +63,15 @@ If you prefer a visual interface, you can launch the built-in ADK web experience
 uv run adk web agents --port 21000
 ```
 Then, open your browser and navigate to `http://localhost:21000/dev-ui/` to interact with all the deployed Apps.
+What to do now:
+
+Open http://localhost:21000/dev-ui/
+If needed, keep your API key in .env (you already copied sample.env).
+If you want to repeat this on your own machine later, use:
+
+uv lock --index https://pypi.org/simple
+uv sync --index https://pypi.org/simple
+uv run adk web agents --port 21000
+Also, in PowerShell use Copy-Item sample.env .env (instead of cp if that alias behaves oddly in your setup).
+
+GPT-5.
